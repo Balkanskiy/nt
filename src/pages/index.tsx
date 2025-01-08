@@ -99,7 +99,7 @@ export default function IndexPage() {
               <p>{answer}</p>
             </CardBody>
           </Card>
-          <img src={base64String} alt="" />
+          <img src={base64String || ""} alt="" />
           {base64String && (
             <div>
               <p>Base64 String:</p>

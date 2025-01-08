@@ -1,8 +1,6 @@
-# Vite & NextUI Template
+# Neural Tarot
 
-This is a template for creating applications using Vite and NextUI (v2).
-
-[Try it on CodeSandbox](https://githubbox.com/nextui-org/vite-template)
+This is a project to create a tarot card reading app that uses a neural network to generate the readings.
 
 ## Technologies Used
 
