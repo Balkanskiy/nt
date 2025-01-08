@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
 import { Input, Textarea } from "@nextui-org/input";
 import { Button } from "@nextui-org/button";
-import { Card, CardBody } from "@nextui-org/react";
+import { Card, CardBody, Image } from "@nextui-org/react";
 import { CircularProgress } from "@nextui-org/progress";
 import { Select, SelectItem } from "@nextui-org/select";
 import OpenAI from "openai";
+
 import { title } from "@/components/primitives";
 
 enum Languages {
@@ -133,7 +134,11 @@ export default function IndexPage() {
           />
           <Input type={"file"} onChange={handleFileChange} />
           <p className="text-default-500 text-small">Input value: {prompt}</p>
-          <Button color="primary" isDisabled={base64String === null || prompt === null} onPress={getAnswer}>
+          <Button
+            color="primary"
+            isDisabled={base64String === null || prompt === null}
+            onPress={getAnswer}
+          >
             get vision
           </Button>
           <Card>
@@ -141,7 +146,15 @@ export default function IndexPage() {
               <p>{answer}</p>
             </CardBody>
           </Card>
-          <img alt="" src={base64String || ""} />
+          {base64String && (
+            <Image
+              isBlurred
+              alt="NextUI Album Cover"
+              className="m-5"
+              src={base64String}
+              width={240}
+            />
+          )}
           {base64String && (
             <div>
               <p>Base64 String:</p>
