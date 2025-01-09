@@ -8,6 +8,21 @@ import OpenAI from "openai";
 
 import { title } from "@/components/primitives";
 
+// swords
+// https://www.trustedtarot.com/images/cards/S0.png
+
+// cups
+// https://www.trustedtarot.com/images/cards/C0.png
+
+// wands
+// https://www.trustedtarot.com/images/cards/W0.png
+
+// pentacles
+// https://www.trustedtarot.com/images/cards/P0.png
+
+// major arcana
+// https://www.trustedtarot.com/images/cards/00.png
+
 enum Languages {
   English = "en",
   Russian = "ru",
@@ -30,13 +45,24 @@ const getPrompt = (lang: Languages) => {
   }
 };
 
+export function getRandomCard(): string {
+  const firstChars = ["S", "C", "W", "P", "0"];
+  const secondChars = "0123456789";
+
+  const firstChar = firstChars[Math.floor(Math.random() * firstChars.length)];
+  const secondChar =
+    secondChars[Math.floor(Math.random() * secondChars.length)];
+
+  return firstChar + secondChar;
+}
+
 const openai = new OpenAI({
   dangerouslyAllowBrowser: true,
   apiKey:
     "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",
 });
 
-const getVision = async (base64_image: string, prompt) => {
+const getVision = async (base64_image: string, prompt: string) => {
   if (base64_image) {
     const response = await openai.chat.completions.create({
       model: "gpt-4o-mini",
@@ -45,6 +71,18 @@ const getVision = async (base64_image: string, prompt) => {
           role: "user",
           content: [
             { type: "text", text: `${prompt}` },
+            {
+              type: "image_url",
+              image_url: {
+                url: "https://www.trustedtarot.com/images/cards/S3.png",
+              },
+            },
+            {
+              type: "image_url",
+              image_url: {
+                url: "https://www.trustedtarot.com/images/cards/C4.png",
+              },
+            },
             {
               type: "image_url",
               image_url: {
@@ -104,65 +142,77 @@ export default function IndexPage() {
   };
 
   return (
-    <div>
+    <div className={"layout"}>
       {isLoading && <CircularProgress />}
-      <section className="flex flex-col items-center justify-center gap-4 py-8 md:py-10">
-        <div className="inline-block max-w-lg text-center justify-center">
-          <span className={title({ color: "cyan" })}>Neural&nbsp;</span>
-          <span className={title({ color: "violet" })}>T&nbsp;</span>
-        </div>
+      <div className="inline-block max-w-lg text-center justify-center">
+        <span className={title({ color: "cyan" })}>Neural&nbsp;</span>
+        <span className={title({ color: "violet" })}>T&nbsp;</span>
+      </div>
+      <div className={"images"}>
+        <Image
+          className={"image"}
+          src={`https://www.trustedtarot.com/images/cards/${getRandomCard()}.png`}
+        />
+        <Image
+          className={"image"}
+          src={`https://www.trustedtarot.com/images/cards/${getRandomCard()}.png`}
+        />
+        <Image
+          className={"image"}
+          src={`https://www.trustedtarot.com/images/cards/${getRandomCard()}.png`}
+        />
+      </div>
 
-        <Select
+      <Select
+        className="max-w-xs"
+        label="Language"
+        placeholder="Select Language"
+        selectedKeys={[selectedLanguage]}
+        onChange={selectLanguage}
+      >
+        {languages.map((language) => (
+          <SelectItem key={language.key}>{language.label}</SelectItem>
+        ))}
+      </Select>
+
+      <div className="mt-8">
+        <Textarea
           className="max-w-xs"
-          label="Language"
-          placeholder="Select Language"
-          selectedKeys={[selectedLanguage]}
-          onChange={selectLanguage}
+          label="Prompt"
+          placeholder="Type something"
+          value={prompt}
+          onValueChange={setPrompt}
+        />
+        <Input type={"file"} onChange={handleFileChange} />
+        <p className="text-default-500 text-small">Input value: {prompt}</p>
+        <Button
+          color="primary"
+          isDisabled={base64String === null || prompt === null}
+          onPress={getAnswer}
         >
-          {languages.map((language) => (
-            <SelectItem key={language.key}>{language.label}</SelectItem>
-          ))}
-        </Select>
-
-        <div className="mt-8">
-          <Textarea
-            className="max-w-xs"
-            label="Prompt"
-            placeholder="Type something"
-            value={prompt}
-            onValueChange={setPrompt}
+          get vision
+        </Button>
+        <Card>
+          <CardBody>
+            <p>{answer}</p>
+          </CardBody>
+        </Card>
+        {base64String && (
+          <Image
+            isBlurred
+            alt="NextUI Album Cover"
+            className="m-5"
+            src={base64String}
+            width={240}
           />
-          <Input type={"file"} onChange={handleFileChange} />
-          <p className="text-default-500 text-small">Input value: {prompt}</p>
-          <Button
-            color="primary"
-            isDisabled={base64String === null || prompt === null}
-            onPress={getAnswer}
-          >
-            get vision
-          </Button>
-          <Card>
-            <CardBody>
-              <p>{answer}</p>
-            </CardBody>
-          </Card>
-          {base64String && (
-            <Image
-              isBlurred
-              alt="NextUI Album Cover"
-              className="m-5"
-              src={base64String}
-              width={240}
-            />
-          )}
-          {base64String && (
-            <div>
-              <p>Base64 String:</p>
-              <textarea readOnly cols={50} rows={10} value={base64String} />
-            </div>
-          )}
-        </div>
-      </section>
+        )}
+        {base64String && (
+          <div>
+            <p>Base64 String:</p>
+            <textarea readOnly cols={50} rows={10} value={base64String} />
+          </div>
+        )}
+      </div>
     </div>
   );
 }
