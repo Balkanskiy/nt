@@ -1,10 +1,8 @@
 export const TarotIcon = (props: any) => (
   <svg
     fill={props.fill}
-    height="800px"
     id="_x32_"
     viewBox="0 0 512 512"
-    width="800px"
     xmlSpace="preserve"
     xmlns="http://www.w3.org/2000/svg"
     xmlnsXlink="http://www.w3.org/1999/xlink"
