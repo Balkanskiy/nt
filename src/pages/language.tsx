@@ -13,11 +13,11 @@ import { useEffect, useState } from "react";
 
 import bgVideo from "../assets/bg-videos.mp4";
 import { getRandomCard } from "../pages/index";
+import { useOpenAi } from "../hooks/use-open-ai";
 
 import { title } from "@/components/primitives";
 import { useStore } from "@/store/store.tsx";
 import { TarotIcon as IconSvg } from "@/assets/tarot-icon";
-import { testAnswer } from "@/assets/test-answer.ts";
 
 export enum Languages {
   English = "en",
@@ -47,7 +47,7 @@ export default function LanguagePage() {
   const [isLoading, setIsLoading] = useState(false);
   const [answer, setAnswer] = useState<any>("");
 
-  // const [getVision] = useOpenAi();
+  const [getVision] = useOpenAi();
 
   useEffect(() => {
     setCardSrc(
@@ -55,6 +55,14 @@ export default function LanguagePage() {
         `https://www.trustedtarot.com/images/cards/${getRandomCard()}.png`,
     );
   }, [step]);
+
+  useEffect(() => {
+    if (selectedLanguage === Languages.Russian) {
+      setPrompt("растолкуй эти карты таро");
+    } else {
+      setPrompt("Interpret these tarot cards");
+    }
+  }, [selectedLanguage]);
 
   const endContent = (
     <Button color="secondary" size="sm" onPress={setStep}>
@@ -88,9 +96,10 @@ export default function LanguagePage() {
   const getAnswer = async () => {
     if (base64String) {
       setIsLoading(true);
-      // const vision = await getVision(base64String, prompt);
+      const vision = await getVision(base64String, prompt);
+
       setTimeout(() => {
-        setAnswer(testAnswer);
+        setAnswer(vision);
         setIsLoading(false);
         setStep();
       }, 3000);
@@ -168,7 +177,6 @@ export default function LanguagePage() {
                     <>
                       <input
                         id="fileInput"
-                        style={{ display: "none" }}
                         type="file"
                         onChange={handleFileChange}
                       />
